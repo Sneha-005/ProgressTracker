@@ -1,0 +1,237 @@
+package com.devsneha.progresstracker.ui.dashboard
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.devsneha.progresstracker.model.Student
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.EventAvailable
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material3.Divider
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.ui.graphics.vector.ImageVector
+
+@Composable
+fun DashboardScreen(
+    modifier: Modifier = Modifier,
+    viewModel: DashboardViewModel = viewModel()
+) {
+    val student by viewModel.student.collectAsState()
+    val upcomingTests = student.tests.filter { it.score == null }
+    val previousTests = student.tests.filter { it.score != null }
+    val attendancePercent = student.attendance.daysPresent.toFloat() / student.attendance.totalDays
+
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.surfaceVariant
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(8.dp),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(20.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Student Icon",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(text = student.name, style = MaterialTheme.typography.headlineSmall)
+                            Text(text = "Class: ${student.className}", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "ID: ${student.studentId}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+                }
+            }
+            item {
+                SectionHeader(title = "Courses Taken", icon = Icons.Default.MenuBook)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${student.courses.size} Courses",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Row {
+                            student.courses.take(3).forEach {
+                                AssistChip(
+                                    onClick = {},
+                                    label = { Text(it.name) },
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                            }
+                            if (student.courses.size > 3) {
+                                Text("+${student.courses.size - 3} more", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
+                            }
+                        }
+                    }
+                }
+            }
+            item {
+                SectionHeader(title = "Attendance (Last Month)", icon = Icons.Default.EventAvailable)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Present: ${student.attendance.daysPresent} / ${student.attendance.totalDays} days",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LinearProgressIndicator(
+                            progress = attendancePercent,
+                            modifier = Modifier
+                                .fillMaxWidth(0.9f)
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "${(attendancePercent * 100).toInt()}% attendance",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+            item {
+                SectionHeader(title = "Upcoming Tests", icon = Icons.Default.Event)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        if (upcomingTests.isEmpty()) {
+                            Text(text = "No upcoming tests", style = MaterialTheme.typography.bodyMedium)
+                        } else {
+                            upcomingTests.forEach { test ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(vertical = 4.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Event,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.secondary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(text = "${test.subject}: ${test.date}", style = MaterialTheme.typography.bodyMedium)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            item {
+                SectionHeader(title = "Previous Test Scores", icon = Icons.Default.Assignment)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        if (previousTests.isEmpty()) {
+                            Text(text = "No previous test scores", style = MaterialTheme.typography.bodyMedium)
+                        } else {
+                            previousTests.forEach { test ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(vertical = 4.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.tertiary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(text = test.subject, style = MaterialTheme.typography.bodyMedium)
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    AssistChip(
+                                        onClick = {},
+                                        label = { Text("${test.score}") },
+                                        colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(title: String, icon: ImageVector) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(22.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+    Divider(
+        color = MaterialTheme.colorScheme.outlineVariant,
+        thickness = 1.dp,
+        modifier = Modifier.padding(vertical = 4.dp)
+    )
+} 
