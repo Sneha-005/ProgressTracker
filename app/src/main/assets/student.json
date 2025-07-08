@@ -1,0 +1,23 @@
+{
+  "name": "Sneha Dev",
+  "className": "10th Grade",
+  "studentId": "STU12345",
+  "courses": [
+    { "name": "Mathematics" },
+    { "name": "Science" },
+    { "name": "English" },
+    { "name": "History" },
+    { "name": "Geography" }
+  ],
+  "attendance": {
+    "daysPresent": 20,
+    "totalDays": 22
+  },
+  "tests": [
+    { "subject": "Mathematics", "date": "2024-07-10", "score": null },
+    { "subject": "Science", "date": "2024-07-17", "score": null },
+    { "subject": "English", "date": "2024-06-30", "score": 88 },
+    { "subject": "History", "date": "2024-06-22", "score": 92 },
+    { "subject": "Geography", "date": "2024-06-17", "score": 85 }
+  ]
+} 

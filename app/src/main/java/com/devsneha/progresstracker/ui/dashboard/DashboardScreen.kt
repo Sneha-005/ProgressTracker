@@ -28,13 +28,52 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.devsneha.progresstracker.ui.dashboard.DashboardUiState
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.LaunchedEffect
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-    viewModel: DashboardViewModel = viewModel()
+    viewModel: DashboardViewModel = viewModel(),
+    context: Context
 ) {
-    val student by viewModel.student.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.load(context)
+    }
+    val uiState by viewModel.uiState.collectAsState()
+
+    when (uiState) {
+        is DashboardUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is DashboardUiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = (uiState as DashboardUiState.Error).message, color = MaterialTheme.colorScheme.error)
+            }
+        }
+        is DashboardUiState.Success -> {
+            val student = (uiState as DashboardUiState.Success).student
+            DashboardContent(student = student, modifier = modifier)
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun DashboardContent(student: com.devsneha.progresstracker.model.Student, modifier: Modifier = Modifier) {
     val upcomingTests = student.tests.filter { it.score == null }
     val previousTests = student.tests.filter { it.score != null }
     val attendancePercent = student.attendance.daysPresent.toFloat() / student.attendance.totalDays
@@ -163,7 +202,7 @@ fun DashboardScreen(
                                         modifier = Modifier.size(20.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text(text = "${test.subject}: ${test.date}", style = MaterialTheme.typography.bodyMedium)
+                                    Text(text = "${test.subject}: ${LocalDate.parse(test.date)}", style = MaterialTheme.typography.bodyMedium)
                                 }
                             }
                         }

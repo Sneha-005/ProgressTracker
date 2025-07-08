@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
             ProgressTrackerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     DashboardScreen(
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        context = applicationContext
                     )
                 }
             }

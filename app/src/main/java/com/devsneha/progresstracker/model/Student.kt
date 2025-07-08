@@ -1,5 +1,8 @@
 package com.devsneha.progresstracker.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Student(
     val name: String,
     val className: String,
@@ -9,8 +12,11 @@ data class Student(
     val tests: List<Test>
 )
 
+@Serializable
 data class Course(val name: String)
 
+@Serializable
 data class Attendance(val daysPresent: Int, val totalDays: Int)
 
-data class Test(val subject: String, val date: java.time.LocalDate, val score: Int?)
+@Serializable
+data class Test(val subject: String, val date: String, val score: Int?)
