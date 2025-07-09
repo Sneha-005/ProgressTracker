@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "505447860864",
+    "project_id": "catalliftassign",
+    "storage_bucket": "catalliftassign.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:505447860864:android:20522efe51f34c3b52b465",
+        "android_client_info": {
+          "package_name": "com.devsneha.progresstracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "505447860864-9r44nbhhobssi98j8p3a0e96d3p5rmsr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devsneha.progresstracker",
+            "certificate_hash": "4349764810ed32883ea4ab8e173f972307bec37c"
+          }
+        },
+        {
+          "client_id": "505447860864-phjc4sfqm1rlel0gj2jpuu2tdf0ue2fh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnA20PNuHB28ZKQLTjHVKBWWkpuN3l8bk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "505447860864-phjc4sfqm1rlel0gj2jpuu2tdf0ue2fh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "505447860864-vkoekl9la3htjbv50pnedk7u447lk8o8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.catalift"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:505447860864:android:43b646fcf9ff9b1052b465",
+        "android_client_info": {
+          "package_name": "com.example.catalift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "505447860864-phjc4sfqm1rlel0gj2jpuu2tdf0ue2fh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnA20PNuHB28ZKQLTjHVKBWWkpuN3l8bk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "505447860864-phjc4sfqm1rlel0gj2jpuu2tdf0ue2fh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "505447860864-vkoekl9la3htjbv50pnedk7u447lk8o8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.catalift"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

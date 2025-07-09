@@ -11,6 +11,7 @@ pluginManagement {
         gradlePluginPortal()
         plugins {
             id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+            id("com.google.gms.google-services") version "4.4.3"
         }
     }
 }

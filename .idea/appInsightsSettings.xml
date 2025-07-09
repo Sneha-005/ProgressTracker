@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.devsneha.progresstracker" />
+                  <option name="mobileSdkAppId" value="1:505447860864:android:20522efe51f34c3b52b465" />
+                  <option name="projectId" value="catalliftassign" />
+                  <option name="projectNumber" value="505447860864" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

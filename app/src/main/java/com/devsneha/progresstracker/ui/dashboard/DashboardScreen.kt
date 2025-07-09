@@ -47,26 +47,30 @@ fun DashboardScreen(
     }
     val uiState by viewModel.uiState.collectAsState()
 
-    when (uiState) {
-        is DashboardUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (uiState) {
+                is DashboardUiState.Loading -> {
+                    CircularProgressIndicator()
+                }
+                is DashboardUiState.Error -> {
+                    Text(
+                        text = (uiState as DashboardUiState.Error).message,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                is DashboardUiState.Success -> {
+                    val student = (uiState as DashboardUiState.Success).student
+                    DashboardContent(student = student, modifier = modifier)
+                }
             }
-        }
-        is DashboardUiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = (uiState as DashboardUiState.Error).message, color = MaterialTheme.colorScheme.error)
-            }
-        }
-        is DashboardUiState.Success -> {
-            val student = (uiState as DashboardUiState.Success).student
-            DashboardContent(student = student, modifier = modifier)
         }
     }
 }
@@ -78,168 +82,188 @@ private fun DashboardContent(student: com.devsneha.progresstracker.model.Student
     val previousTests = student.tests.filter { it.score != null }
     val attendancePercent = student.attendance.daysPresent.toFloat() / student.attendance.totalDays
 
-    Surface(
-        modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surfaceVariant
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    shape = RoundedCornerShape(20.dp)
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .heightIn(min = 120.dp),
+                elevation = CardDefaults.cardElevation(12.dp),
+                shape = RoundedCornerShape(28.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(24.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.padding(20.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Student Icon",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(48.dp)
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Column {
+                        Text(
+                            text = student.name,
+                            style = MaterialTheme.typography.headlineMedium
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
-                            Text(text = student.name, style = MaterialTheme.typography.headlineSmall)
-                            Text(text = "Class: ${student.className}", style = MaterialTheme.typography.bodyMedium)
-                            Text(text = "ID: ${student.studentId}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Class: ${student.className}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "ID: ${student.studentId}",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+        }
+        item {
+            SectionHeader(title = "Courses", icon = Icons.Default.MenuBook)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(6.dp),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(18.dp)
+                ) {
+                    Text(
+                        text = "${student.courses.size} Courses",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    androidx.compose.foundation.lazy.LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(student.courses.size) { idx ->
+                            AssistChip(
+                                onClick = {},
+                                label = { Text(student.courses[idx].name) },
+                                colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                            )
                         }
                     }
                 }
             }
-            item {
-                SectionHeader(title = "Courses Taken", icon = Icons.Default.MenuBook)
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    shape = RoundedCornerShape(16.dp)
+        }
+        item {
+            SectionHeader(title = "Attendance", icon = Icons.Default.EventAvailable)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(6.dp),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(18.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Text(
+                        text = "Present: ${student.attendance.daysPresent} / ${student.attendance.totalDays} days",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LinearProgressIndicator(
+                        progress = attendancePercent,
+                        modifier = Modifier
+                            .fillMaxWidth(0.92f)
+                            .height(10.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "${(attendancePercent * 100).toInt()}% attendance",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
+        item {
+            SectionHeader(title = "Upcoming Tests", icon = Icons.Default.Event)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(6.dp),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Column(modifier = Modifier.padding(18.dp)) {
+                    if (upcomingTests.isEmpty()) {
                         Text(
-                            text = "${student.courses.size} Courses",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.secondary
+                            text = "No upcoming tests",
+                            style = MaterialTheme.typography.bodyLarge
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Row {
-                            student.courses.take(3).forEach {
+                    } else {
+                        upcomingTests.forEach { test ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(vertical = 6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Event,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "${test.subject}: ${LocalDate.parse(test.date)}",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        item {
+            SectionHeader(title = "Previous Test Scores", icon = Icons.Default.Assignment)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(6.dp),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Column(modifier = Modifier.padding(18.dp)) {
+                    if (previousTests.isEmpty()) {
+                        Text(
+                            text = "No previous test scores",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    } else {
+                        previousTests.forEach { test ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(vertical = 6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.tertiary,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = test.subject,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Spacer(modifier = Modifier.width(14.dp))
                                 AssistChip(
                                     onClick = {},
-                                    label = { Text(it.name) },
-                                    colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                                    label = { Text("${test.score}") },
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
                                 )
-                                Spacer(modifier = Modifier.width(6.dp))
-                            }
-                            if (student.courses.size > 3) {
-                                Text("+${student.courses.size - 3} more", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
-                            }
-                        }
-                    }
-                }
-            }
-            item {
-                SectionHeader(title = "Attendance (Last Month)", icon = Icons.Default.EventAvailable)
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Present: ${student.attendance.daysPresent} / ${student.attendance.totalDays} days",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        LinearProgressIndicator(
-                            progress = attendancePercent,
-                            modifier = Modifier
-                                .fillMaxWidth(0.9f)
-                                .height(8.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "${(attendancePercent * 100).toInt()}% attendance",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            }
-            item {
-                SectionHeader(title = "Upcoming Tests", icon = Icons.Default.Event)
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        if (upcomingTests.isEmpty()) {
-                            Text(text = "No upcoming tests", style = MaterialTheme.typography.bodyMedium)
-                        } else {
-                            upcomingTests.forEach { test ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(vertical = 4.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Event,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.secondary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(text = "${test.subject}: ${LocalDate.parse(test.date)}", style = MaterialTheme.typography.bodyMedium)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            item {
-                SectionHeader(title = "Previous Test Scores", icon = Icons.Default.Assignment)
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        if (previousTests.isEmpty()) {
-                            Text(text = "No previous test scores", style = MaterialTheme.typography.bodyMedium)
-                        } else {
-                            previousTests.forEach { test ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(vertical = 4.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Star,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.tertiary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(text = test.subject, style = MaterialTheme.typography.bodyMedium)
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    AssistChip(
-                                        onClick = {},
-                                        label = { Text("${test.score}") },
-                                        colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
-                                    )
-                                }
                             }
                         }
                     }
@@ -253,24 +277,24 @@ private fun DashboardContent(student: com.devsneha.progresstracker.model.Student
 private fun SectionHeader(title: String, icon: ImageVector) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+        modifier = Modifier.padding(bottom = 2.dp, top = 8.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier.size(24.dp)
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary
         )
     }
     Divider(
         color = MaterialTheme.colorScheme.outlineVariant,
         thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 4.dp)
+        modifier = Modifier.padding(vertical = 2.dp)
     )
 } 
